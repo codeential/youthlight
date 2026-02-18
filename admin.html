@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Youthlight </title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+    }
+    
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      opacity: 0;
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .settings-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .settings-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      color: #64748b;
+      border-left: 3px solid transparent;
+    }
+
+    .settings-nav-item:hover {
+      background-color: #f1f5f9;
+      color: #334155;
+    }
+
+    .settings-nav-item.active {
+      background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+      color: #0369a1;
+      border-left-color: #0369a1;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      color: #1e293b;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+      margin: 32px 0;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 28px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      transition: 0.3s;
+      border-radius: 28px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: #3b82f6;
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background-color: #d1fae5;
+      color: #047857;
+    }
+
+    .badge-warning {
+      background-color: #fef3c7;
+      color: #d97706;
+    }
+
+    .badge-error {
+      background-color: #fee2e2;
+      color: #dc2626;
+    }
+
+    .notification-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background-color: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+
+    .notification-item:hover {
+      border-color: #0ea5e9;
+      background-color: #f0f9ff;
+    }
+
+    .notification-item-text {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      color: #1e293b;
+      font-size: 14px;
+    }
+
+    .notification-desc {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background-color: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background-color: #e2e8f0;
+    }
+
+    .btn-danger {
+      background-color: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-danger:hover {
+      background-color: #fecaca;
+    }
+
+    .success-message {
+      padding: 12px 16px;
+      background-color: #d1fae5;
+      color: #047857;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      display: none;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 24px;
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #64748b;
+      transition: color 0.2s ease;
+    }
+
+    .modal-close:hover {
+      color: #1e293b;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      justify-content: flex-end;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-slate-50">
+  <div id="app" class="h-full w-full flex"><!-- Sidebar -->
+   <aside id="sidebar" class="w-64 bg-gray-170 border-r border-slate-200 flex flex-col fixed h-full z-20"><!-- Logo -->
+<div class="p-4 border-b border-slate-100">
+
+  <!-- Full Elliptical Blue Container -->
+  <div class="relative w-56 max-w-md mx-auto">
+
+    <!-- Dual Focus Elliptical Background -->
+    <div class="absolute inset-0 rounded-[999px] 
+                bg-[radial-gradient(ellipse_at_25%_50%,#3b82f6,transparent_60%),radial-gradient(ellipse_at_75%_50%,#1e40af,transparent_60%)] 
+                bg-blue-700 shadow-lg">
+    </div>
+
+    <!-- Inner Soft Layer -->
+    <div class="absolute inset-1 rounded-[999px] bg-white/10 backdrop-blur-sm"></div>
+
+    <!-- Content -->
+    <div class="relative flex items-center px-4 py-2">
+
+      <!-- Logo -->
+      <div class="w-14 h-14 flex items-center justify-center">
+        <img 
+          src="/Group.png" 
+          alt="Youthlight Logo"
+          class="w-12 h-12 object-contain drop-shadow-lg"
+        />
+      </div>
+
+      <!-- Text -->
+      <div>
+        <h1 id="org-name" 
+            class="font-bold text-white text-xl leading-tight tracking-wide">
+          Youthlight
+        </h1>
+        <p class="text-xs text-blue-100 font-medium">
+          Powered by Codeential
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 p-4 overflow-y-auto">
+     <p class="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-3 px-3">Main Menu</p>
+     <ul class="space-y-1">
+      <li><a href="/index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all
+">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg> Dashboard </a></li>
+      <li><a href="/i2.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg> Donors <span class="ml-auto bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded-full">1,247</span> </a></li>
+      
+      <li><a href="/i5.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+        </svg> Transactions </a></li>
+      <li><a href="/reports.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg> Reports </a></li>
+     </ul>
+     <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-3 mt-6">Settings</p>
+     <ul class="space-y-1">
+      <li><a href="admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-blue-50 to-emerald-50 
+text-blue-700 font-semibold border border-blue-100
+">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg> Settings </a></li>
+      <li><a href="/support.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg> Help &amp; Support </a></li>
+     </ul>
+    </nav><!-- User Profile -->
+    <div class="p-4 border-t border-slate-100">
+     <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-all">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-gray-500 to-gray-900 flex items-center justify-center text-white font-semibold text-sm shadow-lg shadow-emerald-600/20">
+       A
+      </div>
+      <div class="flex-1 min-w-0">
+       <p class="text-sm font-semibold text-slate-700 truncate">Administrator</p>
+       <p class="text-xs text-slate-700 truncate">Youthlight Admin</p>
+      </div>
+      <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+     </div>
+    </div>
+   </aside><!-- Main Content -->
+   <div class="flex-1 ml-64 flex flex-col h-full"><!-- Header -->
+    <header class="bg-white border-b border-slate-200 px-8 py-5 sticky top-0 z-40 shadow-sm">
+     <div class="flex items-center justify-between">
+      <div>
+       <h2 id="page-title" class="text-3xl font-bold text-slate-800">Settings</h2>
+       <p class="text-slate-500 text-sm mt-1">Manage your account and organization settings</p>
+      </div>
+     </div>
+    </header><!-- Content Area -->
+    <main class="flex-1 overflow-auto flex"><!-- Settings Navigation -->
+     <div class="w-56 bg-white border-r border-slate-200 p-6 overflow-y-auto">
+      <nav class="settings-nav">
+       <div class="settings-nav-item active" data-section="profile">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg> Admin Profile
+       </div>
+       <div class="settings-nav-item" data-section="password">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg> Change Password
+       </div>
+       <div class="settings-nav-item" data-section="notifications">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg> Notifications
+       </div>
+       <div class="settings-nav-item" data-section="payment">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+        </svg> Payment Gateway
+       </div>
+       <div class="settings-nav-item" data-section="organization">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+        </svg> Organization
+       </div>
+      </nav>
+     </div><!-- Settings Content -->
+     <div class="flex-1 overflow-y-auto p-8"><!-- Profile Section -->
+      <div class="settings-section" id="profile-section">
+       <div class="max-w-2xl">
+        <div class="animate-slide-in">
+         <h2 class="text-2xl font-bold text-slate-800 mb-2">Admin Profile</h2>
+         <p class="text-slate-600 text-sm mb-8">Manage your personal account information</p>
+         <div class="bg-white rounded-xl border border-slate-200 p-8">
+          <div class="profile-header">
+           <div class="profile-avatar">
+            YL
+           </div>
+           <div>
+            <h3 class="text-xl font-bold text-slate-800">Youthlight Admin</h3>
+            <p class="text-slate-600 text-sm">Administrator Account</p>
+            <p class="text-xs text-slate-500 mt-2">Member since January 2024</p>
+           </div>
+          </div>
+          <div class="success-message" id="profileSuccess">
+           ✓ Profile updated successfully
+          </div>
+          <div class="form-group"><label class="form-label">Full Name</label> <input type="text" class="form-input" value="Youthlight Admin" id="fullName">
+          </div>
+          <div class="grid grid-cols-2 gap-6">
+           <div class="form-group"><label class="form-label">Email Address</label> <input type="email" class="form-input" value="admin@youthlight.org" id="email">
+           </div>
+           <div class="form-group"><label class="form-label">Phone Number</label> <input type="tel" class="form-input" value="+91 98765 43210" id="phone">
+           </div>
+          </div>
+          <div class="form-group"><label class="form-label">Job Title</label> <input type="text" class="form-input" value="Organization Administrator" id="jobTitle">
+          </div>
+          <div class="form-group"><label class="form-label">Bio</label> <textarea class="form-textarea" id="bio" placeholder="Tell us about yourself">Experienced administrator managing Youthlight operations and donor relations.</textarea>
+          </div>
+          <div class="flex gap-3"><button class="btn btn-primary" onclick="saveProfile()">Save Changes</button> <button class="btn btn-secondary">Cancel</button>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Password Section -->
+      <div class="settings-section hidden" id="password-section">
+       <div class="max-w-2xl">
+        <div class="animate-slide-in">
+         <h2 class="text-2xl font-bold text-slate-800 mb-2">Change Password</h2>
+         <p class="text-slate-600 text-sm mb-8">Update your password to keep your account secure</p>
+         <div class="bg-white rounded-xl border border-slate-200 p-8">
+          <div class="success-message" id="passwordSuccess">
+           ✓ Password changed successfully
+          </div>
+          <div class="form-group"><label class="form-label">Current Password</label> <input type="password" class="form-input" placeholder="Enter current password" id="currentPassword">
+          </div>
+          <div class="form-group"><label class="form-label">New Password</label> <input type="password" class="form-input" placeholder="Enter new password" id="newPassword">
+           <p class="text-xs text-slate-500 mt-2">Minimum 8 characters, must include uppercase, lowercase, and numbers</p>
+          </div>
+          <div class="form-group"><label class="form-label">Confirm Password</label> <input type="password" class="form-input" placeholder="Confirm new password" id="confirmPassword">
+          </div>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+           <p class="text-sm text-blue-800"><strong>Security Tip:</strong> Use a unique password that you don't use for other accounts. Enable two-factor authentication for extra security.</p>
+          </div>
+          <div class="flex gap-3"><button class="btn btn-primary" onclick="changePassword()">Update Password</button> <button class="btn btn-secondary">Cancel</button>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Notifications Section -->
+      <div class="settings-section hidden" id="notifications-section">
+       <div class="max-w-2xl">
+        <div class="animate-slide-in">
+         <h2 class="text-2xl font-bold text-slate-800 mb-2">Email Notifications</h2>
+         <p class="text-slate-600 text-sm mb-8">Manage which notifications you receive via email</p>
+         <div class="bg-white rounded-xl border border-slate-200 p-8 space-y-6">
+          <div class="success-message" id="notificationSuccess">
+           ✓ Notification settings updated
+          </div>
+          <h3 class="font-bold text-slate-800">Donation &amp; Campaign Alerts</h3>
+          <div class="notification-item">
+           <div class="notification-item-text">
+            <p class="notification-title">New Donation Received</p>
+            <p class="notification-desc">Get notified when a new donation is received</p>
+           </div><label class="toggle-switch"> <input type="checkbox" id="notifDonation" checked> <span class="toggle-slider"></span> </label>
+          </div>
+          <div class="notification-item">
+           <div class="notification-item-text">
+            <p class="notification-title">Campaign Milestone Reached</p>
+            <p class="notification-desc">Notify when a campaign reaches 50%, 75%, or 100% of its goal</p>
+           </div><label class="toggle-switch"> <input type="checkbox" id="notifMilestone" checked> <span class="toggle-slider"></span> </label>
+          </div>
+          <div class="notification-item">
+           <div class="notification-item-text">
+            <p class="notification-title">Large Donation Alert</p>
+            <p class="notification-desc">Alert when donation amount exceeds ₹50,000</p>
+           </div><label class="toggle-switch"> <input type="checkbox" id="notifLarge" checked> <span class="toggle-slider"></span> </label>
+          </div>
+          <div class="section-divider"></div>
+          <h3 class="font-bold text-slate-800">System &amp; Account</h3>
+          <div class="notification-item">
+           <div class="notification-item-text">
+            <p class="notification-title">Weekly Reports</p>
+            <p class="notification-desc">Receive weekly summary reports every Monday</p>
+           </div><label class="toggle-switch"> <input type="checkbox" id="notifWeekly" checked> <span class="toggle-slider"></span> </label>
+          </div>
+          <div class="notification-item">
+           <div class="notification-item-text">
+            <p class="notification-title">Failed Transactions</p>
+            <p class="notification-desc">Alert for any failed or declined transactions</p>
+           </div><label class="toggle-switch"> <input type="checkbox" id="notifFailed" checked> <span class="toggle-slider"></span> </label>
+          </div>
+          <div class="notification-item">
+           <div class="notification-item-text">
+            <p class="notification-title">Account Activity</p>
+            <p class="notification-desc">Notify of login attempts from new devices</p>
+           </div><label class="toggle-switch"> <input type="checkbox" id="notifActivity" checked> <span class="toggle-slider"></span> </label>
+          </div>
+          <div class="section-divider"></div>
+          <div class="flex gap-3"><button class="btn btn-primary" onclick="saveNotifications()">Save Preferences</button> <button class="btn btn-secondary">Cancel</button>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Payment Gateway Section -->
+      <div class="settings-section hidden" id="payment-section">
+       <div class="max-w-2xl">
+        <div class="animate-slide-in">
+         <h2 class="text-2xl font-bold text-slate-800 mb-2">Payment Gateway Configuration</h2>
+         <p class="text-slate-600 text-sm mb-8">Configure your Razorpay payment gateway settings</p>
+         <div class="bg-white rounded-xl border border-slate-200 p-8">
+          <div class="success-message" id="paymentSuccess">
+           ✓ Payment gateway settings updated
+          </div>
+          <div class="flex items-center justify-between p-4 bg-emerald-50 border border-emerald-200 rounded-lg mb-6">
+           <div>
+            <p class="font-semibold text-emerald-900">Razorpay Connection Status</p>
+            <p class="text-sm text-emerald-800">Connected &amp; Active</p>
+           </div><span class="badge badge-success">Active</span>
+          </div>
+          <div class="grid grid-cols-2 gap-6 mb-6">
+           <div class="form-group"><label class="form-label">Payment Gateway</label> <select class="form-select" id="paymentGateway"> <option>Razorpay</option> <option>PayU</option> <option>Stripe</option> </select>
+           </div>
+           <div class="form-group"><label class="form-label">Environment</label> <select class="form-select" id="paymentEnv"> <option>Production</option> <option>Sandbox</option> </select>
+           </div>
+          </div>
+          <div class="form-group"><label class="form-label">API Key (Public)</label>
+           <div class="flex gap-2"><input type="password" class="form-input" value="rzp_live_1A2B3C4D5E6F7G" id="apiKey"> <button class="btn btn-secondary" onclick="toggleApiKey()">Show</button>
+           </div>
+          </div>
+          <div class="form-group"><label class="form-label">API Secret (Private)</label>
+           <div class="flex gap-2"><input type="password" class="form-input" value="●●●●●●●●●●●●●●●●" id="apiSecret" readonly> <button class="btn btn-secondary">Regenerate</button>
+           </div>
+           <p class="text-xs text-slate-500 mt-2">Never share your API secret key</p>
+          </div>
+          <div class="section-divider"></div>
+          <h3 class="font-bold text-slate-800 mb-4">Payment Settings</h3>
+          <div class="grid grid-cols-2 gap-6 mb-6">
+           <div class="form-group"><label class="form-label">Minimum Donation Amount (₹)</label> <input type="number" class="form-input" value="100" id="minAmount">
+           </div>
+           <div class="form-group"><label class="form-label">Maximum Donation Amount (₹)</label> <input type="number" class="form-input" value="1000000" id="maxAmount">
+           </div>
+          </div>
+          <div class="form-group"><label class="form-label">Payment Methods</label>
+           <div class="space-y-2">
+            <div class="flex items-center"><input type="checkbox" id="card" checked class="w-4 h-4"> <label for="card" class="ml-3 text-sm text-slate-700">Credit/Debit Cards</label>
+            </div>
+            <div class="flex items-center"><input type="checkbox" id="upi" checked class="w-4 h-4"> <label for="upi" class="ml-3 text-sm text-slate-700">UPI</label>
+            </div>
+            <div class="flex items-center"><input type="checkbox" id="netbanking" checked class="w-4 h-4"> <label for="netbanking" class="ml-3 text-sm text-slate-700">Net Banking</label>
+            </div>
+            <div class="flex items-center"><input type="checkbox" id="wallet" checked class="w-4 h-4"> <label for="wallet" class="ml-3 text-sm text-slate-700">Digital Wallets</label>
+            </div>
+           </div>
+          </div>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 my-6">
+           <p class="text-sm text-blue-800"><strong>Note:</strong> These settings apply to all new transactions. Existing transactions retain their original settings.</p>
+          </div>
+          <div class="flex gap-3"><button class="btn btn-primary" onclick="savePaymentSettings()">Save Settings</button> <button class="btn btn-secondary">Cancel</button> <button class="btn btn-danger" onclick="testConnection()">Test Connection</button>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Organization Section -->
+      <div class="settings-section hidden" id="organization-section">
+       <div class="max-w-2xl">
+        <div class="animate-slide-in">
+         <h2 class="text-2xl font-bold text-slate-800 mb-2">Organization Details</h2>
+         <p class="text-slate-600 text-sm mb-8">Manage your organization's profile information</p>
+         <div class="bg-white rounded-xl border border-slate-200 p-8">
+          <div class="success-message" id="organizationSuccess">
+           ✓ Organization details updated
+          </div>
+          <div class="form-group"><label class="form-label">Organization Name</label> <input type="text" class="form-input" value="Youthlight " id="orgName">
+          </div>
+          <div class="grid grid-cols-2 gap-6">
+           <div class="form-group"><label class="form-label">Registration Number</label> <input type="text" class="form-input" value="NGO/2020/00123456" id="regNumber">
+           </div>
+           <div class="form-group"><label class="form-label">Year Established</label> <input type="number" class="form-input" value="1856" id="yearEstablished">
+           </div>
+          </div>
+          <div class="form-group"><label class="form-label">Organization Email</label> <input type="email" class="form-input" value="info@youthlight.org" id="orgEmail">
+          </div>
+          <div class="grid grid-cols-2 gap-6">
+           <div class="form-group"><label class="form-label">Phone Number</label> <input type="tel" class="form-input" value="+91 11 4141 2200" id="orgPhone">
+           </div>
+           <div class="form-group"><label class="form-label">Website</label> <input type="url" class="form-input" value="https://www.youthlight.org" id="orgWebsite">
+           </div>
+          </div>
+          <div class="form-group"><label class="form-label">Address</label> <input type="text" class="form-input" value="1, Jai Singh Road, New  - 110001" id="orgAddress">
+          </div>
+          <div class="grid grid-cols-2 gap-6">
+           <div class="form-group"><label class="form-label">City</label> <input type="text" class="form-input" value="New " id="orgCity">
+           </div>
+           <div class="form-group"><label class="form-label">Country</label> <input type="text" class="form-input" value="India" id="orgCountry">
+           </div>
+          </div>
+          <div class="form-group"><label class="form-label">Organization Description</label> <textarea class="form-textarea" id="orgDescription" placeholder="Tell us about your organization">Youthlight is a premier sports and recreational centre dedicated to promoting youth welfare, fitness, and social development across  since 1856.</textarea>
+          </div>
+          <div class="form-group"><label class="form-label">Tax ID (PAN/TAN)</label> <input type="text" class="form-input" value="AAATM5005K" id="taxId">
+          </div>
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+           <p class="text-sm text-amber-800"><strong>Note:</strong> Some organization details require verification. Changes may take 24-48 hours to be reflected across the platform.</p>
+          </div>
+          <div class="flex gap-3"><button class="btn btn-primary" onclick="saveOrganization()">Save Details</button> <button class="btn btn-secondary">Cancel</button>
+          </div>
+         </div>
+         
+        </div>
+        
+       </div>
+       
+      </div>
+      
+     </div>
+     
+    </main>
+
+
+
+<!-- Codeential Footer -->
+<footer class="bg-white border-t border-slate-200 px-8 py-6">
+  <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+
+    <!-- Left: Logo + Branding -->
+    <div class="flex items-center">
+
+      <img 
+        src="/logo1.png" 
+        class="w-18 h-18 mt-2 object-contain drop-shadow-sm"
+        alt="Codeential Logo"
+      />
+
+      <div>
+        <h3 class="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-900 bg-clip-text text-transparent">
+          Codeential Technologies
+        </h3>
+        <p class="text-sm text-slate-700">
+          Powered by Ideas. Delivered by Code.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Right: Copyright -->
+    <div class="text-xs text-slate-400 text-center md:text-right">
+      © 2026 Codeential Technologies. All rights reserved.
+    </div>
+
+  </div>
+</footer>
+
+</div>
+
+  </div>
+  <script>
+    const defaultConfig = {
+      page_title: 'Settings'
+    };
+
+    let config = { ...defaultConfig };
+
+    // Settings Navigation
+    document.querySelectorAll('.settings-nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        const section = item.dataset.section;
+        document.querySelectorAll('.settings-section').forEach(s => s.classList.add('hidden'));
+        document.getElementById(`${section}-section`).classList.remove('hidden');
+      });
+    });
+
+    // Save Functions
+    function saveProfile() {
+      const fullName = document.getElementById('fullName').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      
+      if (!fullName || !email || !phone) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      const successMsg = document.getElementById('profileSuccess');
+      successMsg.classList.add('show');
+      setTimeout(() => {
+        successMsg.classList.remove('show');
+      }, 3000);
+    }
+
+    function changePassword() {
+      const current = document.getElementById('currentPassword').value;
+      const newPass = document.getElementById('newPassword').value;
+      const confirm = document.getElementById('confirmPassword').value;
+
+      if (!current || !newPass || !confirm) {
+        alert('Please fill in all password fields');
+        return;
+      }
+
+      if (newPass !== confirm) {
+        alert('Passwords do not match');
+        return;
+      }
+
+      if (newPass.length < 8) {
+        alert('Password must be at least 8 characters long');
+        return;
+      }
+
+      const successMsg = document.getElementById('passwordSuccess');
+      successMsg.classList.add('show');
+      
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+
+      setTimeout(() => {
+        successMsg.classList.remove('show');
+      }, 3000);
+    }
+
+    function saveNotifications() {
+      const successMsg = document.getElementById('notificationSuccess');
+      successMsg.classList.add('show');
+      setTimeout(() => {
+        successMsg.classList.remove('show');
+      }, 3000);
+    }
+
+    function savePaymentSettings() {
+      const successMsg = document.getElementById('paymentSuccess');
+      successMsg.classList.add('show');
+      setTimeout(() => {
+        successMsg.classList.remove('show');
+      }, 3000);
+    }
+
+    function saveOrganization() {
+      const successMsg = document.getElementById('organizationSuccess');
+      successMsg.classList.add('show');
+      setTimeout(() => {
+        successMsg.classList.remove('show');
+      }, 3000);
+    }
+
+    function toggleApiKey() {
+      const apiKey = document.getElementById('apiKey');
+      const btn = event.target;
+      
+      if (apiKey.type === 'password') {
+        apiKey.type = 'text';
+        btn.textContent = 'Hide';
+      } else {
+        apiKey.type = 'password';
+        btn.textContent = 'Show';
+      }
+    }
+
+    function testConnection() {
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Testing...';
+
+      setTimeout(() => {
+        alert('✓ Connection test successful! Your Razorpay gateway is properly configured.');
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }, 2000);
+    }
+
+    // Element SDK Integration
+    async function onConfigChange(newConfig) {
+      document.getElementById('page-title').textContent = newConfig.page_title || defaultConfig.page_title;
+    }
+
+    function mapToCapabilities(cfg) {
+      return {
+        recolorables: [],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(cfg) {
+      return new Map([
+        ['page_title', cfg.page_title || defaultConfig.page_title]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+      config = window.elementSdk.config;
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cd36eac60cea7a9',t:'MTc3MDk3NjM0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
